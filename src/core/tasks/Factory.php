@@ -11,11 +11,17 @@ use Stark\core\Container;
 
 class Factory {
     private $taskToClassNameMap = array(
+        /** System tasks */
+        'property'           => 'Stark\tasks\Property',
+        'registerTask'       => 'Stark\tasks\RegisterTask',
+        'registerRepository' => 'Stark\tasks\RegisterRepository',
+
         /** Common tasks  */
-        'comment'         => 'Stark\tasks\Comment',
-        'fileFilter'      => 'Stark\tasks\FileFilter',
-        'mail'            => 'Stark\tasks\Mail',
-        'externalCommand' => 'Stark\tasks\ExternalCommand',
+        'comment'            => 'Stark\tasks\Comment',
+        'fileFilter'         => 'Stark\tasks\FileFilter',
+        'mail'               => 'Stark\tasks\Mail',
+        'externalCommand'    => 'Stark\tasks\ExternalCommand',
+        'log'                => 'Stark\tasks\Log',
 
         /** PHP Tasks */
         'phpLint'         => 'Stark\tasks\PHPLint'

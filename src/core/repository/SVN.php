@@ -1,6 +1,7 @@
 <?php
 namespace Stark\core\repository;
 
+use Stark\core\io\Console;
 use Stark\core\io\File;
 use Stark\core\Repository;
 
@@ -42,7 +43,7 @@ class SVN implements Repository{
     }
 
     public function getAuthor() {
-        return $this->executeCommand("svnlook author -r {$this->trx} {$this->repo}");
+        return trim($this->executeCommand("svnlook author -r {$this->trx} {$this->repo}"));
     }
     public function getComment() {
         return $this->executeCommand("svnlook log -r {$this->trx} {$this->repo}");
@@ -50,8 +51,7 @@ class SVN implements Repository{
 
 
     protected function executeCommand($command) {
-        ob_start();
-        passthru($command);
-        return ob_get_clean();
+        $console = new Console();
+        return $console->execute($command);
     }
 }

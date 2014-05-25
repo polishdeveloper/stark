@@ -28,7 +28,9 @@ class ExternalCommand extends Task{
     }
 
     public function execute() {
-        exec($this->command, $output, $return_var);
+        $command = $this->expandVariable($this->command);
+
+        exec($command, $output, $return_var);
         if ($return_var != $this->successExitCode) {
             $this->pushError(sprintf($this->errorMessage, $this->command, $return_var));
             if ($this->includeOutput) {

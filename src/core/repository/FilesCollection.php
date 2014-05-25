@@ -7,7 +7,7 @@
  */
 namespace Stark\core\repository;
 
-use Stark\core\io\File;
+use Stark\core\repository\File;
 
 class FilesCollection implements  \ArrayAccess, \Iterator{
 

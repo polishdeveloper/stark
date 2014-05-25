@@ -8,7 +8,6 @@
 namespace Stark\core\tasks;
 
 use Stark\core\Container;
-use Stark\core\Properties;
 
 abstract class Task {
     protected $errors = array();
@@ -39,7 +38,10 @@ abstract class Task {
         return $this->errors;
     }
 
+    protected function expandVariable($message) {
+        return $this->container->getProperties()->expand($message);
+    }
+
     abstract function getName();
     abstract function execute();
-
 }

@@ -5,14 +5,14 @@
  * Date: 15/05/14
  * Time: 4:26 PM
  */
-namespace Stark\core\tasks;
+namespace Stark\tasks;
 
-class RegisterRepository extends Task {
+class RegisterTask extends Task {
 
     /**
      * @var string
      */
-    private $repositoryName;
+    private $name;
     /**
      * @var mixed
      */
@@ -20,9 +20,9 @@ class RegisterRepository extends Task {
 
     public function setName($name) {
         if ($name == "") {
-            throw new \InvalidArgumentException('Repository name cannot be null');
+            throw new \InvalidArgumentException('Task name cannot be null');
         }
-        $this->repositoryName = $name;
+        $this->name = $name;
     }
     public function setClassName($className) {
         $this->className = $className;
@@ -30,18 +30,19 @@ class RegisterRepository extends Task {
 
     public function execute() {
         if (null === $this->name) {
-            throw new \InvalidArgumentException('Expecting repository name');
+            throw new \InvalidArgumentException('Expecting task name');
         }
         if (null === $this->className) {
-            throw new \InvalidArgumentException('Expecting className for repository ' . $this->repositoryName);
+            throw new \InvalidArgumentException('Expecting className for task ' . $this->task);
         }
+        $errorMsg = '';
         if (!$this->container->getTasksFactory()->registerTask($this->name, $this->className, $errorMsg)) {
             $this->pushError('Cannot register task ' . $this->name . ': ' . $errorMsg);
         }
     }
 
     public function getName() {
-        return 'Repository registration';
+        return 'Task registration';
     }
 
 }

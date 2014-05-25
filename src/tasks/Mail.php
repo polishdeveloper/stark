@@ -5,7 +5,8 @@ use Stark\core\tasks\Task;
 
 class Mail extends Task{
     private $to;
-    private $from;
+    private $from = 'stark@localhost';
+    private $replyTo = 'none@localhost';
     private $subject;
     private $body;
 
@@ -16,6 +17,10 @@ class Mail extends Task{
     public function setFrom($from) {
         $this->from = $from;
     }
+    public function setReplyTo($replyTo) {
+        $this->replyTo = $replyTo;
+    }
+
     public function setSubject($subject) {
         $this->subject = $subject;
     }
@@ -28,6 +33,10 @@ class Mail extends Task{
     }
 
     public function execute() {
-        mail($this->to, $this->subject, $this->body);
+        $headers = 'From: ' . $this->from .  "\r\n" .
+            'Reply-To: ' . $this->replyTo .  "\r\n" .
+            'X-Mailer: PHP/' . phpversion();
+
+        mail($this->to, $this->subject, $this->body, $headers);
     }
 }

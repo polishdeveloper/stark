@@ -10,6 +10,7 @@ namespace Stark\core;
 
 
 use Stark\core\io\HooksXMLReader;
+use Stark\core\io\Output;
 use Stark\core\repository\Factory;
 use Stark\core\tasks\Task;
 
@@ -19,6 +20,9 @@ final class Stark {
      * @var HooksXMLReader;
      */
     private $xml;
+    /**
+     * @var Container
+     */
     private $container;
     private $errorsCollection = array();
 
@@ -30,12 +34,15 @@ final class Stark {
             $factory->setContainer($container);
             return $factory;
         };
+        $this->container['properties'] = function($container)  {
+            $properties = new \Stark\core\Properties();
+            $properties->setContainer($container);
+            $properties->initializeDefault();
+            return $properties;
+        };
     }
 
     public function __construct($arguments) {
-
-
-
         array_shift($arguments); //drop filename
         $this->validateArguments($arguments);
         $repoType = array_shift($arguments);
@@ -62,9 +69,13 @@ final class Stark {
     }
 
     public function execute() {
-        $tasks = $this->xml->getHooks($this->action);
-        foreach ($tasks as $taskDefinition) {
+        $tasksDefinitions = $this->xml->getHooks($this->action);
+        $tasks = array();
+        foreach ($tasksDefinitions as $taskDefinition) {
             $task = $this->createTask($taskDefinition);
+            $tasks[] = $task;
+        }
+        foreach ($tasks as $task) {
             $this->executeTask($task);
         }
         $this->handleResponse();
@@ -96,15 +107,21 @@ final class Stark {
         $this->errorsCollection[$task->getName()] = array_merge($this->errorsCollection[$task->getName()], $task->getErrors());
     }
 
+    /**
+     * Todo - create an output class for that
+     */
     protected function handleResponse() {
+       $output = new Output();
        if (!empty($this->errorsCollection)) {
-           echo "Cannot perform action. Errors: \n";
+           $output->writeLn("Cannot perform action. Errors:");
+
            $i = 0;
            foreach ($this->errorsCollection as $taskName => $errors) {
-               ++$i;
-               echo "$i. Hook $taskName failed with errors : \n";
+               $output->setPrefix('');
+               $output->writeLn(sprinft("%s. Hook %s failed with errors", ++$i,$taskName));
+               $output->setPrefix('    ');
                foreach ($errors as $error) {
-                   echo "   $error \n";
+                   $output->writeLn($error);
                }
            }
 

@@ -32,8 +32,7 @@ class HooksXMLReader {
 
     public function parse() {
         $tasks = $this->parseTree($this->xml);
-
-        var_dump($tasks);
+        unset($tasks['hooks']);
     }
 
 

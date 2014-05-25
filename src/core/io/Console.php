@@ -9,6 +9,12 @@ namespace Stark\core\io;
 
 class Console {
 
+    /**
+     * @todo strip out last new line character
+     * @param $command
+     * @param null $returnValue
+     * @return string
+     */
     public function execute($command, &$returnValue = null) {
         ob_start();
         passthru($command, $returnValue);
