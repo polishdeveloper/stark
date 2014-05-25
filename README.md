@@ -22,9 +22,9 @@ Stark solved all issues with creating VCS-related scripts. With one clean XML yo
   --------------
   
   ```bash 
-stark type action arg1, arg2, arg3, ... argN```
-  
-  
+stark type action arg1, arg2, arg3, ... argN
+```
+    
   | param | info  |
   | ----- | ----- |
   | type  | repository type. At this moment STARK supports only GIT and SVN |
@@ -34,13 +34,14 @@ stark type action arg1, arg2, arg3, ... argN```
  
   
   ```bash
-  stark svn pre-commit $1 $2```
+ stark svn pre-commit $1 $2
+ ```
   
   
   Sample XML definition
   ------------
   
-    <stark>
+  ```<stark>
             <hooks>
                 <pre-commit>
                     <comment minLength="10" notEmpty="true" />
@@ -54,16 +55,16 @@ stark type action arg1, arg2, arg3, ... argN```
                 </post-commit>
             </hooks>
         </stark>
-    
-> By this XML file during the pre-commit action STARK will check 
-> * comment is not empty and contains at least 10 characters
-> * comment matches [a-zA-Z0-9]+ regex.
-> * user is not commiting .log or .ini files
-> * php files have correct syntax
-> 
-> And during  the post-commit action STARK will 
-> * send email to raynor@dev with subject *Post commit* and information about author
-> * will log in /tmp/vcs.log information about action (author, date and time)
+```    
+By this XML file during the pre-commit action STARK will check 
+ * comment is not empty and contains at least 10 characters
+ * comment matches [a-zA-Z0-9]+ regex.
+ * user is not commiting .log or .ini files
+ * php files have correct syntax
+ 
+And during  the post-commit action STARK will 
+ * send email to raynor@dev with subject *Post commit* and information about author
+ * will log in /tmp/vcs.log information about action (author, date and time)
    
    
    Available Tasks
