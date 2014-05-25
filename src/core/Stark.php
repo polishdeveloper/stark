@@ -118,7 +118,7 @@ final class Stark {
            $i = 0;
            foreach ($this->errorsCollection as $taskName => $errors) {
                $output->setPrefix('');
-               $output->writeLn(sprinft("%s. Hook %s failed with errors", ++$i,$taskName));
+               $output->writeLn(sprintf("%s. Hook %s failed with errors", ++$i,$taskName));
                $output->setPrefix('    ');
                foreach ($errors as $error) {
                    $output->writeLn($error);
