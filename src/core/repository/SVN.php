@@ -23,7 +23,7 @@ class SVN implements Repository{
         if (null === $this->changedFilesCollection) {
             $this->changedFilesCollection = new FilesCollection();
 
-            $elements = $this->executeCommand("svnlook changed -r {$this->trx} {$this->repo}");
+            $elements = $this->executeCommand("svnlook changed -t {$this->trx} {$this->repo}");
             $byLine = explode("\n", $elements);
 
             foreach ($byLine as $changeDefinition) {
@@ -39,14 +39,14 @@ class SVN implements Repository{
     }
 
     public function getFileContent($file) {
-        return $this->executeCommand("svnlook cat -r {$this->trx} {$this->repo} $file");
+        return $this->executeCommand("svnlook cat -t {$this->trx} {$this->repo} $file");
     }
 
     public function getAuthor() {
-        return trim($this->executeCommand("svnlook author -r {$this->trx} {$this->repo}"));
+        return trim($this->executeCommand("svnlook author -t {$this->trx} {$this->repo}"));
     }
     public function getComment() {
-        return $this->executeCommand("svnlook log -r {$this->trx} {$this->repo}");
+        return $this->executeCommand("svnlook log -t {$this->trx} {$this->repo}");
     }
 
 
