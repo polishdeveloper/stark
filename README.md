@@ -18,30 +18,26 @@ Stark solved all issues with creating VCS-related scripts. With one clean XML yo
 
   
   
-  Usage
-  --------------
+Usage
+---
   
-  ```bash 
+```bash
 stark type action arg1, arg2, arg3, ... argN
 ```
-    
-  | param | info  |
-  | ----- | ----- |
-  | type  | repository type. At this moment STARK supports only GIT and SVN |
-  | action  | action you want to perform. Stark will take all tasks definied under hooks/hook/{ACTION} tree and execute them. If at least one of them fails script will stop commit and output error message [only on pre-actions] |
-  | arg1, arg2, arg3 | arguments set for repository |
+
+| param | info  |
+| ----- | ----- |
+| type  | repository type. At this moment STARK supports only GIT and SVN |
+| action  | action you want to perform. Stark will take all tasks definied under hooks/hook/{ACTION} tree and execute them. If at least one of them fails script will stop commit and output error message [only on pre-actions] |
+| arg1, arg2, arg3 | arguments set for repository |
   
- 
+
   
-  ```bash
- stark svn pre-commit $1 $2
- ```
+Sample XML definition
+---
   
-  
-  Sample XML definition
-  ------------
-  
-  ```<stark>
+  ```xml
+  <stark>
             <hooks>
                 <pre-commit>
                     <comment minLength="10" notEmpty="true" />
@@ -55,7 +51,8 @@ stark type action arg1, arg2, arg3, ... argN
                 </post-commit>
             </hooks>
         </stark>
-```    
+```
+
 By this XML file during the pre-commit action STARK will check 
  * comment is not empty and contains at least 10 characters
  * comment matches [a-zA-Z0-9]+ regex.
@@ -67,73 +64,70 @@ And during  the post-commit action STARK will
  * will log in /tmp/vcs.log information about action (author, date and time)
    
    
-   Available Tasks
-   --------------
+Available Tasks
+----------------
    
-   Comment
-   ---
+Comment
+---
     <comment minLength="10" notEmpty="true" regex="/[a-zA-Z]+/" />
    
-   | Parameter  | Default value | Required | Description |
-   | ---------- | ------------- | --------- | ---------- |
-   | minLenght  | 0  | no | Minimum comment lenght|
-   | notEmpty   | true | no | can comment be empty |
-   | regex      | /.*/ | no | regular expression comment has to match |
+| Parameter  | Default value | Required | Description |
+| ---------- | ------------- | --------- | ---------- |
+| minLenght  | 0  | no | Minimum comment lenght|
+| notEmpty   | true | no | can comment be empty |
+| regex      | /.*/ | no | regular expression comment has to match |
    
-   
-   
-   
-   
-   ExternalCommand 
-   ---
+
+| ExternalCommand 
+ ---
     <externalCommand command="ls -la" errorMessage="Cannot execute command" />
-   | Parameter  | Default value | Required | Description |
-   | ---------- | ------------- | --------- | ---------- |
-   | command    |  null    | yes       | command to run |
-   | errorMessage | Execution of remote command '%s' failed with code '%s | no | Error message to show when command fails (sends exitCode different than successExitCode |
-   | successExitCode | 0 | no | success exit code |
-   | includeOuput | false | no | when tasks fails, should error message contain output of script |
-   
+| Parameter  | Default value | Required | Description |
+| ---------- | ------------- | --------- | ---------- |
+| command    |  null    | yes       | command to run |
+| errorMessage | Execution of remote command '%s' failed with code '%s | no | Error message to show when command fails (sends exitCode different than successExitCode |
+| successExitCode | 0 | no | success exit code |
+| includeOuput | false | no | when tasks fails, should error message contain output of script |
+ 
    
    
 File Filter
 ---
     <fileFilter extensions="ini,log,tmp" regex="^\/tmp\/.*$" />
-   | Parameter  | Default value | Required | Description |
-   | ---------- | ------------- | --------- | ---------- |
-   | extensions    |  null    | no       | comma sepearated list of extensions to filter |
-   | regex | '' | no | file paths cannot match given regular expression |
-   | admins | '' | no | comma separated list of authors who are allowed to commit |
+| Parameter  | Default value | Required | Description |
+| ---------- | ------------- | --------- | ---------- |
+| extensions    |  null    | no       | comma sepearated list of extensions to filter |
+| regex | '' | no | file paths cannot match given regular expression |
+| admins | '' | no | comma separated list of authors who are allowed to commit |
     
 Log
 ---
     <log file="/tmp/vcs.log" meesage="User ${author} made a commit on ${date} ${time}" />
    
-   | Parameter  | Default value | Required | Description |
-   | ---------- | ------------- | --------- | ---------- |
-   | file  | '' | yes | log file name|
-   | message | '' | yes | line to put into log file |
+| Parameter  | Default value | Required | Description |
+| ---------- | ------------- | --------- | ---------- |
+| file  | '' | yes | log file name|
+| message | '' | yes | line to put into log file |
    
 Mail
 ---
     <mail to="admin@dev" subject="Successful commit" body="User ${author} made a commit on ${date} ${time}" />
    
-   | Parameter  | Default value | Required | Description |
-   | ---------- | ------------- | --------- | ---------- |
-   | to  | '' | yes | receiver of message |
-   | subject | '' | yes | message subject |
-   | body | '' | yes | email content |
-   | from | stark@localhost | no | sender |
-   | replyTo | none@localhost | no | replyTo address |
+| Parameter  | Default value | Required | Description |
+| ---------- | ------------- | --------- | ---------- |
+| to  | '' | yes | receiver of message |
+| subject | '' | yes | message subject |
+| body | '' | yes | email content |
+| from | stark@localhost | no | sender |
+| replyTo | none@localhost | no | replyTo address |
    
     
 PHPLint
 ---
     <phpLint  />
-   
-   | Parameter  | Default value | Required | Description |
-   | ---------- | ------------- | --------- | ---------- |
-   | fileExtensions  | php,php4,php5,phtml | no | comma separated list of php file extensions |
+ 
+| Parameter  | Default value | Required | Description |
+| ---------- | ------------- | --------- | ---------- |
+| fileExtensions  | php,php4,php5,phtml | no | comma separated list of php file extensions |
     
 
 
@@ -142,10 +136,10 @@ RegisterRepository
 Registers a new repository for given hooks.
     <registerRepository name="vcs" classname="myVCSClass"  />
    
-   | Parameter  | Default value | Required | Description |
-   | ---------- | ------------- | --------- | ---------- |
-   | name  | '' |  yes | repository name |
-   | classname  | '' |  yes | class that implments **\Stark\core\Repository** interface |
+| Parameter  | Default value | Required | Description |
+| ---------- | ------------- | --------- | ---------- |
+| name  | '' |  yes | repository name |
+| classname  | '' |  yes | class that implments **\Stark\core\Repository** interface |
 To use new repository you have to run Stark passing new repository name 
 ```bash
 stark vcs myAction arg1, arg2, arg3
@@ -156,12 +150,17 @@ RegisterTask
 ---
     <registerTask name="myTask" classname="myTaskClass"  />
    
-   | Parameter  | Default value | Required | Description |
-   | ---------- | ------------- | --------- | ---------- |
-   | name  | '' |  yes | repository name |
-   | classname  | '' |  yes | class that extends **\Stark\core\Tasks\Task** class |
+| Parameter  | Default value | Required | Description |
+| ---------- | ------------- | --------- | ---------- |
+| name  | '' |  yes | repository name |
+| classname  | '' |  yes | class that extends **\Stark\core\Tasks\Task** class |
    
    
+
+Author
+--------
+
+Piotr Miazga <piotr.miazga@yahoo.com>
 
 License
 --------
