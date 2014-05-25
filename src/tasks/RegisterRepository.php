@@ -24,7 +24,7 @@ class RegisterRepository extends Task {
         }
         $this->repositoryName = $name;
     }
-    public function setClassName($className) {
+    public function setClassname($className) {
         $this->className = $className;
     }
 
