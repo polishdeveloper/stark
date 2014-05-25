@@ -1,0 +1,11 @@
+#!/usr/bin/php
+<?php
+//Usage: hooks $type $hook $param1 $param2 ... $param_n
+
+//Usage for SVN: stark svn $hook $repo $trx
+//Usage for GIT: stark git $hook $path $revision
+
+require_once(__DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php');
+
+$stark = new Stark\core\Stark($argv);
+$stark->execute();

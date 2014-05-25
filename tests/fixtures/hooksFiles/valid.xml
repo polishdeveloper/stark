@@ -1,0 +1,23 @@
+<stark>
+    <importProperties file="myProperties.conf" />
+    <property name="test" value="2" />
+    <hookDefinition name="testHook" class="fixtures.testHook" />
+
+    <hooks>
+        <pre-commit>
+            <comment minLength="5" />
+            <onFailure>
+
+            </onFailure>
+        </pre-commit>
+
+
+        <post-commit>
+            <tracComment url="${plugin.trac.url}" user="${plugins.trac.user}" password="${plugins.trac.pass}" />
+        </post-commit>
+    </hooks>
+
+    <test>
+        <abc />
+    </test>
+</stark>

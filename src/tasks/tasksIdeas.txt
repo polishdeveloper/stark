@@ -1,0 +1,27 @@
+normal tasks
+ -- format date into property
+
+Send message to IRC
+Is Author allowed to commit
+Run php lint
+run phpcs
+
+
+Track
+ -- verify trac ticket
+ -- post comment on trac ticket
+
+ Jira
+  -- verify trac ticket
+  -- post comment on trac ticket
+
+Jenkins
+ -- trigger build
+
+
+ Bamboo
+ -- trigger build
+
+ Redmine
+  -- verify ticket
+  -- post ocmment on commit

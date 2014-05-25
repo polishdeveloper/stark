@@ -1,0 +1,12 @@
+<stark>
+    <hooks>
+        <pre-commit>
+            <comment minLength="5" notEmpty="true" />
+            <testHook param="testParam" />
+        </pre-commit>
+
+        <post-commit>
+            <mail to="admin@test.com" subject="Post commit" body="Valid commit"/>
+        </post-commit>
+    </hooks>
+</stark>
