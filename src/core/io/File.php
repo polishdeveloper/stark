@@ -28,7 +28,6 @@ class File {
         $this->repo = $repo;
     }
 
-
     public function getOperation() {
         return $this->type;
     }
@@ -43,7 +42,7 @@ class File {
 
     public function getContent() {
         if ($this->content === null) {
-            $this->repo->getFileContent($this->path);
+            $this->content = $this->repo->getFileContent($this->path);
         }
 
         return $this->content;

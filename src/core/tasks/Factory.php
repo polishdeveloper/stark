@@ -13,18 +13,18 @@ class Factory {
     private $taskToClassNameMap = array(
         /** System tasks */
         'property'           => 'Stark\tasks\Property',
-        'registerTask'       => 'Stark\tasks\RegisterTask',
-        'registerRepository' => 'Stark\tasks\RegisterRepository',
+        'registertask'       => 'Stark\tasks\RegisterTask',
+        'registerrepository' => 'Stark\tasks\RegisterRepository',
 
         /** Common tasks  */
         'comment'            => 'Stark\tasks\Comment',
-        'fileFilter'         => 'Stark\tasks\FileFilter',
+        'filefilter'         => 'Stark\tasks\FileFilter',
         'mail'               => 'Stark\tasks\Mail',
-        'externalCommand'    => 'Stark\tasks\ExternalCommand',
+        'externalcommand'    => 'Stark\tasks\ExternalCommand',
         'log'                => 'Stark\tasks\Log',
 
         /** PHP Tasks */
-        'phpLint'         => 'Stark\tasks\PHPLint'
+        'phplint'         => 'Stark\tasks\PHPLint'
 
         /** Bugtracking tasks */
 
@@ -63,10 +63,11 @@ class Factory {
 
 
     protected function createTaskInstance($name) {
-        if (!array_key_exists($name, $this->taskToClassNameMap)) {
+        $taskId = mb_strtolower($name);
+        if (!array_key_exists($taskId, $this->taskToClassNameMap)) {
             throw new \InvalidArgumentException("Task $name doesn't exist");
         }
-        return new $this->taskToClassNameMap[$name]();
+        return new $this->taskToClassNameMap[$taskId]();
     }
 
 

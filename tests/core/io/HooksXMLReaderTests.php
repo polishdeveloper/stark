@@ -32,11 +32,11 @@ class HooksXMLReaderTests extends \PHPUnit_Framework_TestCase {
      * @expectedException \InvalidArgumentException
      */
     public function testInvalidFile() {
-        $hooks = new HooksXMLReader(__DIR__ . '/../../fixtures/invalid.xml', $this->getContainer());
+        $hooks = new HooksXMLReader(__DIR__ . '/../../fixtures/hooksFiles/invalid.xml', $this->getContainer());
     }
 
     public function testSimpleXml() {
-        $reader = new HooksXMLReader(__DIR__ . '/../../fixtures/simple.xml', $this->getContainer());
+        $reader = new HooksXMLReader(__DIR__ . '/../../fixtures/hooksFiles/simple.xml', $this->getContainer());
 
         $expectedPreCommit = array(
             array(

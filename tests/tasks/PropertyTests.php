@@ -15,16 +15,19 @@ class PropertyTest extends \PHPUnit_Framework_TestCase{
     private $propertyTask;
 
     protected function setUp() {
-        $this->propertyTask = new \Stark\core\tasks\Property();
+        $this->propertyTask = new \Stark\tasks\Property();
     }
 
     public function testSetProperty() {
+        $container = new \Stark\core\Container();
+
         $propertiesMock = $this->getMock('\Stark\core\Properties', array('set'));
         $propertiesMock->expects($this->once())
             ->method('set')
             ->with('test', 'abc');
-        $this->propertyTask->setProperties($propertiesMock);
+        $container->setProperties($propertiesMock);
 
+        $this->propertyTask->setContainer($container);
         $this->propertyTask->setName('test');
         $this->propertyTask->setValue('abc');
         $this->propertyTask->execute();
@@ -34,11 +37,15 @@ class PropertyTest extends \PHPUnit_Framework_TestCase{
      * @expectedException \InvalidArgumentException
      */
     public function testOmmitingNameFails() {
+        $container = new \Stark\core\Container();
+
         $propertiesMock = $this->getMock('\Stark\core\Properties', array('set'));
         $propertiesMock->expects($this->never())
             ->method('set');
+        $container->setProperties($propertiesMock);
 
-        $this->propertyTask->setProperties($propertiesMock);
+
+        $this->propertyTask->setContainer($container);
         $this->propertyTask->setValue('test');
         $this->propertyTask->execute();
     }

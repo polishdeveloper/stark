@@ -6,6 +6,7 @@
  * Time: 4:26 PM
  */
 namespace Stark\tasks;
+use Stark\core\tasks\Task;
 
 class RegisterRepository extends Task {
 

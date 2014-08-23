@@ -91,6 +91,18 @@ class PropertiesTest extends \PHPUnit_Framework_TestCase {
     }
 
 
+    public function testLazyPropps() {
+        $response = 'response';
 
+        $callable = function() use ($response) {
+            return $response;
+        };
+
+        $properties = new Properties();
+        $properties->set('test', $callable);
+        $this->assertEquals('response', $properties->get('test'));
+        $cachedResponse = $response;
+        $this->assertEquals($cachedResponse, $properties->get('test'));
+    }
 
 }

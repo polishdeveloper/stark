@@ -18,15 +18,20 @@ class PHPLint extends Task{
 
     public function execute() {
         foreach ($this->container->getRepo()->getChangedFilesCollection() as $file) {
-            if (in_array($file->getExtension(), $this->phpFileExtensions) && $file->getType() != File::DELETED) {
+            if (in_array($file->getExtension(), $this->phpFileExtensions) && $file->getOperation() != File::DELETED) {
                 $this->checkSyntax($file);
             }
         }
     }
 
     private function checkSyntax(File $file) {
-        exec("php -l '".escapeshellarg($file->getContent())."'" , $output, $returnVal);
-        var_dump($returnVal, $output);
+
+        $command = "echo ".escapeshellarg($file->getContent()) . " | php -l 2>&1" ;
+        exec($command, $output, $returnVal);
+        if ($returnVal != 0) {
+            $this->pushError(str_replace(' -', " " . $file->getPath(), $output[0]));
+        }
+
     }
 
 

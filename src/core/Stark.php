@@ -46,7 +46,7 @@ final class Stark {
         array_shift($arguments); //drop filename
         $this->validateArguments($arguments);
         $repoType = array_shift($arguments);
-        $action   = array_shift($arguments);
+        $this->action   = $arguments[0]; //TODO validate we have at least action
 
         $this->initializeContainer();
         $this->container['repo'] = function() use ($repoType, $arguments) {
@@ -54,7 +54,7 @@ final class Stark {
             return $factory->getRepository($repoType, $arguments);
         };
 
-        $this->action = $action;
+
         $this->loadHooks('hooks.xml');
     }
 
@@ -95,7 +95,7 @@ final class Stark {
             if (!$task->isSuccessful()) {
                 $this->pushErrors($task);
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             //what to do, exception
         }
     }
