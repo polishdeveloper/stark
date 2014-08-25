@@ -113,10 +113,8 @@ class SVN implements Repository{
             foreach ($byLine as $changeDefinition) {
                 $fileAction = mb_substr($changeDefinition, 0, 1);
                 $dirAction = mb_substr($changeDefinition, 1, 1);
-                $unused1 = mb_substr($changeDefinition, 2, 1);
-                $unused2 = mb_substr($changeDefinition, 3, 1);
                 $filePath = mb_substr($changeDefinition, 4);
-                $this->changedFilesCollection->addFile(new File($fileAction, $filePath, $this));
+                $this->changedFilesCollection->addFile(new File($fileAction, $dirAction, $filePath, $this));
             }
         }
         return $this->changedFilesCollection;

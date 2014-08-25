@@ -1,7 +1,6 @@
 <?php
 namespace Stark\core\repository;
 
-use Stark\core\Properties;
 use Stark\core\Repository;
 
 class GIT implements Repository{
@@ -27,4 +26,13 @@ class GIT implements Repository{
 
     }
 
+    public function getFileContent($filePath)
+    {
+
+    }
+
+    public function getChangedFilesCollection()
+    {
+
+    }
 }

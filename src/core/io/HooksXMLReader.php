@@ -7,16 +7,9 @@
  */
 namespace Stark\core\io;
 
-use Stark\core\Container;
-use Stark\core\tasks\Factory;
-
 class HooksXMLReader {
 
     private $xml;
-    /**
-     * @var \Stark\core\Container
-     */
-    private $container;
 
 
     public function __construct($filename) {

@@ -16,7 +16,6 @@ class Console {
      * @return string
      */
     public function execute($command, &$returnValue = null) {
-        echo "DEBUG: Executing command $command \n";
         ob_start();
         passthru($command, $returnValue);
         return ob_get_clean();

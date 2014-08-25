@@ -21,10 +21,12 @@ class File {
      */
     private $repo;
     private $content;
+    private $dir_action;
 
-    public function __construct($type, $path, Repository $repo) {
+    public function __construct($type, $dirAction, $path, Repository $repo) {
         $this->type = $type;
         $this->path = $path;
+        $this->dir_action = $dirAction;
         $this->repo = $repo;
     }
 

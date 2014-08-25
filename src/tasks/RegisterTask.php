@@ -7,6 +7,8 @@
  */
 namespace Stark\tasks;
 
+use Stark\core\tasks\Task;
+
 class RegisterTask extends Task {
 
     /**
