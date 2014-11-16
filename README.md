@@ -1,5 +1,6 @@
 STARK 
 ========
+[![Build Status](https://travis-ci.org/polishdeveloper/stark.svg?branch=master)](https://travis-ci.org/polishdeveloper/stark)
 
 Stark is a project to perform VCS hooks and in case of errors stop action and report to user.
 Stark's use of simple XML hooks file and extensible PHP task classes make it an easy-to-use and highly flexible VCS hooks framework.

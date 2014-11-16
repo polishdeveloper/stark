@@ -1,5 +1,12 @@
 language: php
 php:
   - 5.4
-before_script: composer install
-script: phpunit --configuration phpunit.xml --coverage-text
+before_script:
+  - composer install
+  - mkdir -p build/logs
+install:
+  - composer require satooshi/php-coveralls:~0.6@stable
+script:
+  - phpunit --configuration phpunit.xml --coverage-clover build/logs/clover.xml
+after_success:
+  - php vendor/bin/coveralls -v; fi;'
