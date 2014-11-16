@@ -12,7 +12,7 @@ interface Repository
     public function getComment();
     public function getAuthor();
     public function getFileContent($filePath);
-
     public function getChangedFilesCollection();
+
 
 }

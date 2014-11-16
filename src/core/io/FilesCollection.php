@@ -5,13 +5,14 @@
  * Date: 22/05/14
  * Time: 12:20 PM
  */
-namespace Stark\core\repository;
-
-use Stark\core\io\File;
+namespace Stark\core\io;
 
 class FilesCollection implements  \ArrayAccess, \Iterator{
 
     private $position = 0;
+    /**
+     * @var File[]
+     */
     private $files;
 
     public function addFile(File $file) {

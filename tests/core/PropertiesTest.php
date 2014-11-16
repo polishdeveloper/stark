@@ -105,4 +105,36 @@ class PropertiesTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals($cachedResponse, $properties->get('test'));
     }
 
+
+    public function testinitializeDefault()
+    {
+        $time = time();
+
+        $properties = new Properties();
+
+        $container = new \Stark\core\Container();
+        $container['timestamp'] = $time;
+        $repoMock = $this->getMock('Stark\core\Repository', array('getFileContent', 'getComment', 'getAuthor', 'getChangedFilesCollection'));
+        $repoMock->expects($this->once())
+            ->method('getComment')
+            ->will($this->returnValue('message'));
+        $repoMock->expects($this->once())
+            ->method('getAuthor')
+            ->will($this->returnValue('author'));
+        $container->setRepo($repoMock);
+
+
+
+        $properties->setContainer($container);
+        $properties->initializeDefault();
+
+        $this->assertEquals($properties->get('timestamp'), $time);
+        $this->assertEquals($properties->get('author'), 'author');
+        $this->assertEquals($properties->get('message'), 'message');
+
+        $this->assertEquals($properties->get('author'), 'author');
+        $this->assertEquals($properties->get('message'), 'message');
+    }
+
+
 }

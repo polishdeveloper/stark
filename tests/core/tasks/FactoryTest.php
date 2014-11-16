@@ -43,7 +43,8 @@ class FactoryTests extends \PHPUnit_Framework_TestCase
      * @expectedException \InvalidArgumentException
      */
     public function testCallingNotExistingSetter() {
-        $taskMock = $this->getMock('testTask');
+        $taskMock = $this->getMock('testTask', array('setContainer'));
+
         $factoryMock = $this->getMock('\Stark\core\tasks\Factory', array('createTaskInstance'));
         $factoryMock->expects($this->once())
             ->method('createTaskInstance')
@@ -54,7 +55,7 @@ class FactoryTests extends \PHPUnit_Framework_TestCase
     }
 
     public function testInitializationOfNewTask() {
-        $taskMock = $this->getMock('testTask', array('setMinLength', 'setNotEmpty'));
+        $taskMock = $this->getMock('testTask', array('setMinLength', 'setNotEmpty', 'setContainer'));
         $taskMock->expects($this->once())
             ->method('setMinLength')
             ->with(5)

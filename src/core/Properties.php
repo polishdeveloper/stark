@@ -8,38 +8,37 @@
 namespace Stark\core;
 
 class Properties {
+    use ContainerAwareTrait;
+
     /**
-     * @var Container
+     * @var array
      */
-    private $container;
     private $evaluationStack = array();
 
+    /**
+     * @var array
+     */
     private $properties = array();
+    /**
+     * @var array
+     */
     private $lazyProperties = array();
-
-    public function setContainer(Container $container) {
-        $this->container = $container;
-    }
 
 
     public function initializeDefault() {
-        $time = time();
-        $this->set('time', date('H:i:s', $time));
-        $this->set('date', date('Y-m-d', $time));
-        $this->set('timestamp',  $time);
+        $container = $this->getContainer();;
 
-        $container = $this->container;
+        $this->set('time', date('H:i:s', $container->getTimestamp()));
+        $this->set('date', date('Y-m-d', $container->getTimestamp()));
+        $this->set('timestamp',  $container->getTimestamp());
+
+
         $this->set('author', function() use ($container) {
             return $container->getRepo()->getAuthor();
         });
         $this->set('message', function() use ($container) {
             return $container->getRepo()->getComment();
         });
-
-
-        //author
-        //comment
-        //filesList
     }
 
     public function set($property, $value) {

@@ -3,7 +3,9 @@ namespace Stark\core\repository;
 
 use Stark\core\io\Console;
 use Stark\core\io\File;
+use Stark\core\io\FilesCollection;
 use Stark\core\Repository;
+
 
 /**
  * Class SVN
@@ -20,7 +22,7 @@ use Stark\core\Repository;
  * pre-unlock REPOS-PATH PATH USER TOKEN BREAK-UNLOCK
  * post-unlock REPOS-PATH USER
  */
-class SVN implements Repository{
+class SVN extends CommandlineRepo implements Repository{
 
     const START_COMMIT = 'start-commit';
     const PRE_COMMIT = 'pre-commit';
@@ -46,68 +48,60 @@ class SVN implements Repository{
     const BREAK_UNLOCK = 'break_unlock';
 
 
-    protected $hooksArgsOrder = array(
-        self::START_COMMIT        => array(self::REPOS_PATH, self::USER, self::CAPABILITIES, self::TXN_NAME),
-        self::PRE_COMMIT          => array(self::REPOS_PATH, self::TXN_NAME),
-        self::POST_COMMIT         => array(self::REPOS_PATH, self::REVISION),
-        self::PRE_REVPROP_CHANGE  => array(self::REPOS_PATH, self::REVISION, self::USER, self::PROPNAME, self::ACTION),
-        self::POST_REVPROP_CHANGE => array(self::REPOS_PATH, self::REVISION, self::USER, self::PROPNAME, self::ACTION),
-        self::PRE_LOCK            => array(self::REPOS_PATH, self::PATH, self::USER, self::COMMENT, self::STEAL),
-        self::POST_LOCK           => array(self::REPOS_PATH, self::USER),
-        self::PRE_UNLOCK          => array(self::REPOS_PATH, self::PATH, self::USER, self::TOKEN, self::BREAK_UNLOCK),
-        self::POST_UNLOCK         => array(self::REPOS_PATH, self::USER),
-    );
-
     private $changedFilesCollection;
-    private $arguments = array();
 
 
-
-    private function parseArguments($hook, $arguments) {
-        if (!array_key_exists($hook, $this->hooksArgsOrder)) {
-            throw new \InvalidArgumentException('Unknown hook `' . $hook . '`.' .
-                 'Available hooks :' . implode(',', array_keys($this->hooksArgsOrder)));
-        }
-        $argsCount = count($arguments);
-        $expectedArgsCount = count($this->hooksArgsOrder[$hook]);
-
-        if ($argsCount != $expectedArgsCount) {
-            throw new \InvalidArgumentException("Wrong parameters count, expected $expectedArgsCount, got $argsCount. " .
-                "Expected args order " . implode(' ', $this->hooksArgsOrder[$hook]));
-        }
-
-        foreach($arguments as $id => $arg) {
-            $this->arguments[$this->hooksArgsOrder[$hook][$id]] = $arg;
-        }
+    public function getHooksArgsOrder()
+    {
+        return array(
+            self::START_COMMIT => array(self::REPOS_PATH, self::USER, self::CAPABILITIES, self::TXN_NAME),
+            self::PRE_COMMIT => array(self::REPOS_PATH, self::TXN_NAME),
+            self::POST_COMMIT => array(self::REPOS_PATH, self::REVISION),
+            self::PRE_REVPROP_CHANGE => array(self::REPOS_PATH, self::REVISION, self::USER, self::PROPNAME, self::ACTION),
+            self::POST_REVPROP_CHANGE => array(self::REPOS_PATH, self::REVISION, self::USER, self::PROPNAME, self::ACTION),
+            self::PRE_LOCK => array(self::REPOS_PATH, self::PATH, self::USER, self::COMMENT, self::STEAL),
+            self::POST_LOCK => array(self::REPOS_PATH, self::USER),
+            self::PRE_UNLOCK => array(self::REPOS_PATH, self::PATH, self::USER, self::TOKEN, self::BREAK_UNLOCK),
+            self::POST_UNLOCK => array(self::REPOS_PATH, self::USER),
+        );
     }
 
-    private function buildTransCMDParams() {
+
+    private function buildTransCMDParams()
+    {
         switch ($this->hook) {
             case self::PRE_REVPROP_CHANGE:
             case self::POST_REVPROP_CHANGE:
             case self::POST_COMMIT:
-                return '-r ' . $this->arguments[self::REVISION];
+                return '-r ' . $this->getRevisionId();
             case self::START_COMMIT:
             case self::PRE_COMMIT:
-                return '-t ' . $this->arguments[self::TXN_NAME];
+                return '-t ' . $this->getTransactionId();
             default :
                 throw new \RuntimeException('Revision/Transaction is not available during ' . $this->hook);
         }
     }
 
-
-    public function __construct(/* $hook, $arg1, $arg2, $arg3 */) {
-        $arguments = func_get_args();
-        $this->hook = array_shift($arguments);
-        $this->parseArguments($this->hook, $arguments);
+    public function getRevisionId() {
+        if (!$this->hasArgument(self::REVISION)) {
+            throw new \RuntimeException('Revision number is not accessible at this time');
+        }
+        return $this->getArgument(self::REVISION);
     }
 
 
+    public function getTransactionId() {
+        if (!$this->hasArgument(self::TXN_NAME)) {
+            throw new \RuntimeException('Transaction name is not accessible at this time');
+        }
+        return $this->getArgument(self::TXN_NAME);
+    }
+
     public function getChangedFilesCollection() {
         if (null === $this->changedFilesCollection) {
-            $this->changedFilesCollection = new FilesCollection();
+            $this->changedFilesCollection = $this->createEmptyFilesCollection();
 
-            $elements = $this->executeCommand("svnlook changed {$this->buildTransCMDParams()} {$this->arguments[self::REPOS_PATH]}");
+            $elements = $this->executeCommand("svnlook changed {$this->buildTransCMDParams()} {$this->getArgument(self::REPOS_PATH)}");
             $byLine = explode("\n", $elements);
 
             foreach ($byLine as $changeDefinition) {
@@ -120,19 +114,30 @@ class SVN implements Repository{
         return $this->changedFilesCollection;
     }
 
+
+    protected function createEmptyFilesCollection()
+    {
+        return new FilesCollection();
+    }
+
+
     public function getFileContent($file) {
-        return $this->executeCommand("svnlook cat {$this->buildTransCMDParams()} {$this->arguments[self::REPOS_PATH]} $file");
+        return $this->executeCommand(
+            sprintf("svnlook cat %s %s %s", $this->buildTransCMDParams(), $this->getArgument(self::REPOS_PATH), $file));
     }
 
     public function getAuthor() {
-        return trim($this->executeCommand("svnlook author {$this->buildTransCMDParams()} {$this->arguments[self::REPOS_PATH]}"));
+        return trim($this->executeCommand(
+            sprintf("svnlook author %s %s", $this->buildTransCMDParams(), $this->getArgument(self::REPOS_PATH))));
     }
     public function getComment() {
-        return $this->executeCommand("svnlook log {$this->buildTransCMDParams()} {$this->arguments[self::REPOS_PATH]}");
+        return $this->executeCommand(
+            sprintf("svnlook log %s %s", $this->buildTransCMDParams(), $this->getArgument(self::REPOS_PATH)));
     }
 
 
-    protected function executeCommand($command) {
+    protected function executeCommand($command)
+    {
         $console = new Console();
         return $console->execute($command);
     }

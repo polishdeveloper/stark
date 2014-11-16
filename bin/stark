@@ -7,5 +7,46 @@
 
 require_once(__DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php');
 
-$stark = new Stark\core\Stark($argv);
+
+include(__DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php');
+
+
+$arguments = $argv;
+array_shift($arguments); //drop filename
+
+
+$container = new \Stark\core\Container();
+
+$container['tasksFactory'] = function($container)  {
+    $factory = new \Stark\core\tasks\Factory();
+    $factory->setContainer($container);
+    return $factory;
+};
+
+$container['properties'] = function($container)  {
+    $properties = new \Stark\core\Properties();
+    $properties->setContainer($container);
+    $properties->initializeDefault();
+    return $properties;
+};
+
+$container['renderer'] = function($container) {
+    $renderer = new \Stark\core\io\Renderer();
+    $renderer->setContainer($container);
+    return $renderer;
+};
+
+$container['output'] = function($container) {
+    return new \Stark\core\io\Output();
+};
+
+$container['configReader'] = function($container) {
+    return new \Stark\core\io\HooksXMLReader();
+};
+
+
+
+$stark = new Stark\core\Stark();
+$stark->setContainer($container);
+$stark->setArguments($arguments);
 $stark->execute();

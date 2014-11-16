@@ -10,21 +10,22 @@ namespace Stark\core\tasks;
 use Stark\core\Container;
 
 class Factory {
+
     private $taskToClassNameMap = array(
         /** System tasks */
-        'property'           => 'Stark\tasks\Property',
-        'registertask'       => 'Stark\tasks\RegisterTask',
-        'registerrepository' => 'Stark\tasks\RegisterRepository',
+        'property'            => 'Stark\tasks\Property',
+        'register_task'       => 'Stark\tasks\RegisterTask',
+        'register_repository' => 'Stark\tasks\RegisterRepository',
 
         /** Common tasks  */
-        'comment'            => 'Stark\tasks\Comment',
-        'filefilter'         => 'Stark\tasks\FileFilter',
-        'mail'               => 'Stark\tasks\Mail',
-        'externalcommand'    => 'Stark\tasks\ExternalCommand',
-        'log'                => 'Stark\tasks\Log',
+        'comment'             => 'Stark\tasks\Comment',
+        'file_filter'         => 'Stark\tasks\FileFilter',
+        'mail'                => 'Stark\tasks\Mail',
+        'external_command'    => 'Stark\tasks\ExternalCommand',
+        'log'                 => 'Stark\tasks\Log',
 
         /** PHP Tasks */
-        'phplint'         => 'Stark\tasks\PHPLint'
+        'phplint'             => 'Stark\tasks\PHPLint'
 
         /** Bugtracking tasks */
 
@@ -62,6 +63,10 @@ class Factory {
     }
 
 
+    /**
+     * @param string $name
+     * @return Task
+     */
     protected function createTaskInstance($name) {
         $taskId = mb_strtolower($name);
         if (!array_key_exists($taskId, $this->taskToClassNameMap)) {

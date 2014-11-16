@@ -15,7 +15,7 @@ abstract class Task {
     /**
      * @var Container
      */
-    protected $container;
+    private $container;
 
     public function setContainer(Container $container) {
         $this->container = $container;

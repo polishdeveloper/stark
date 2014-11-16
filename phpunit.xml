@@ -3,7 +3,7 @@
         xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/3.7/phpunit.xsd"
         backupGlobals="true"
         backupStaticAttributes="false"
-        bootstrap="./src/bootstrap.php"
+        bootstrap="./tests/bootstrap.php"
         cacheTokens="false"
         colors="true"
         convertErrorsToExceptions="true"
@@ -26,6 +26,15 @@
         strict="false"
         verbose="false">
 
+
+        <testsuites>
+                <testsuite name="core">
+                        <directory>tests/core</directory>
+                        <directory>tests/core/io</directory>
+                        <directory>tests/core/repository</directory>
+                        <directory>tests/core/tasks</directory>
+                </testsuite>
+        </testsuites>
 
 <!--
     <logging>

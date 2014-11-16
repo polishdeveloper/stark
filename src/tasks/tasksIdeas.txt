@@ -3,8 +3,12 @@ normal tasks
 
 Send message to IRC
 Is Author allowed to commit
-Run php lint
 run phpcs
+check the maximum file size
+verify file namesSuccessExitCode
+jslint
+updateComposerLock repository information
+
 
 
 Track

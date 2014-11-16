@@ -43,4 +43,21 @@ class Container extends \Pimple\Container {
         $this['properties'] = $properties;
     }
 
+    public function getRenderer()
+    {
+        return $this['renderer'];
+    }
+
+    public function getOutput()
+    {
+        return $this['output'];
+    }
+
+    public function getTimestamp()
+    {
+        if (!isset($this['timestamp'])) {
+            $this['timestamp'] = time();
+        }
+        return $this['timestamp'];
+    }
 }

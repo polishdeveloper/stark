@@ -11,8 +11,7 @@ class HooksXMLReader {
 
     private $xml;
 
-
-    public function __construct($filename) {
+    public function read($filename) {
         if (!file_exists($filename)) {
             throw new \InvalidArgumentException("File [$filename] doesn't exist");
         }
@@ -20,6 +19,7 @@ class HooksXMLReader {
         if (!$this->xml) {
             throw new \InvalidArgumentException("Hooks file [$filename] is in invalid format");
         }
+        return $this;
     }
 
 
@@ -29,11 +29,9 @@ class HooksXMLReader {
     }
 
 
-
     public function getHooks($hook) {
         return $this->parseTree($this->xml->hooks->$hook);
     }
-
 
 
     private function parseTree(\SimpleXMLElement $tree) {
@@ -53,7 +51,6 @@ class HooksXMLReader {
         return $tasks;
 
     }
-
 
 
 }

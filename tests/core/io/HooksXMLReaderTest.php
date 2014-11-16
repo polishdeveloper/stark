@@ -8,15 +8,21 @@
 */
 use Stark\core\io\HooksXMLReader;
 
-class HooksXMLReaderTests extends \PHPUnit_Framework_TestCase {
+class HooksXMLReaderTest extends \PHPUnit_Framework_TestCase {
 
+    private function provideParser($file)
+    {
+        $parser = new HooksXMLReader();
+        $parser->read($file);
+        return $parser;
+    }
 
     protected function getContainer() {
         return new \Stark\core\Container();
     }
 
     public function testParsing() {
-        $reader = new HooksXMLReader(__DIR__ . '/../../fixtures/valid.xml', $this->getContainer());
+        $reader = $this->provideParser(__DIR__ . '/../../fixtures/hooksFiles/valid.xml');
         $reader->parse();
     }
 
@@ -25,18 +31,18 @@ class HooksXMLReaderTests extends \PHPUnit_Framework_TestCase {
      * @expectedException \InvalidArgumentException
      */
     public function testFileNotExist() {
-        $hooks = new HooksXMLReader('unknown_file', $this->getContainer());
+        $this->provideParser('unknown_file');
     }
 
     /**
      * @expectedException \InvalidArgumentException
      */
     public function testInvalidFile() {
-        $hooks = new HooksXMLReader(__DIR__ . '/../../fixtures/hooksFiles/invalid.xml', $this->getContainer());
+        $hooks = $this->provideParser(__DIR__ . '/../../fixtures/hooksFiles/invalid.xml', $this->getContainer());
     }
 
     public function testSimpleXml() {
-        $reader = new HooksXMLReader(__DIR__ . '/../../fixtures/hooksFiles/simple.xml', $this->getContainer());
+        $reader = $this->provideParser(__DIR__ . '/../../fixtures/hooksFiles/simple.xml', $this->getContainer());
 
         $expectedPreCommit = array(
             array(

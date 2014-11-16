@@ -7,8 +7,6 @@
  */
 namespace Stark\core;
 
-
-
 use Stark\core\io\HooksXMLReader;
 use Stark\core\io\Output;
 use Stark\core\repository\Factory;
@@ -25,41 +23,30 @@ final class Stark {
      */
     private $container;
     private $errorsCollection = array();
+    private $action;
 
-
-    protected function initializeContainer() {
-        $this->container = new Container();
-        $this->container['tasksFactory'] = function($container)  {
-            $factory = new \Stark\core\tasks\Factory();
-            $factory->setContainer($container);
-            return $factory;
-        };
-        $this->container['properties'] = function($container)  {
-            $properties = new \Stark\core\Properties();
-            $properties->setContainer($container);
-            $properties->initializeDefault();
-            return $properties;
-        };
+    public function setContainer(Container $container)
+    {
+        $this->container = $container;
     }
 
-    public function __construct($arguments) {
-        array_shift($arguments); //drop filename
+    public function setArguments($arguments)
+    {
         $this->validateArguments($arguments);
         $repoType = array_shift($arguments);
-        $this->action   = $arguments[0]; //TODO validate we have at least action
+        $this->action   = $arguments[0];
 
-        $this->initializeContainer();
         $this->container['repo'] = function() use ($repoType, $arguments) {
             $factory = new Factory();
             return $factory->getRepository($repoType, $arguments);
         };
 
-
         $this->loadHooks('hooks.xml');
     }
 
 
-    protected function validateArguments(array $arguments) {
+    protected function validateArguments(array $arguments)
+    {
         if (!array_key_exists(0, $arguments)) {
             throw new \InvalidArgumentException('Missing repository type argument');
         }
@@ -68,35 +55,51 @@ final class Stark {
         }
     }
 
-    public function execute() {
+    public function execute()
+    {
         $tasksDefinitions = $this->xml->getHooks($this->action);
+        $tasks = $this->createTasks($tasksDefinitions);
+        $this->executeTasks($tasks);
+        $this->handleResponse();
+    }
+
+
+    private function executeTasks(array $tasks)
+    {
+        foreach ($tasks as $task) {
+            try {
+                $this->executeTask($task);
+            } catch (\Exception $e)  {
+
+            }
+        }
+    }
+
+    private function createTasks(array $tasksDefinitions)
+    {
         $tasks = array();
         foreach ($tasksDefinitions as $taskDefinition) {
             $task = $this->createTask($taskDefinition);
             $tasks[] = $task;
         }
-        foreach ($tasks as $task) {
-            $this->executeTask($task);
-        }
-        $this->handleResponse();
+        return $tasks;
     }
 
-    public function loadHooks($filename) {
-        $this->xml = new HooksXMLReader($filename);
+    public function loadHooks($filename)
+    {
+        $this->xml = $this->container['configReader']->read($filename);
     }
 
-    protected function createTask(array $taskDefinition) {
+    protected function createTask(array $taskDefinition)
+    {
         return $this->container->getTasksFactory()->buildTask($taskDefinition['name'], $taskDefinition['params']);
     }
 
-    private function executeTask(Task $task) {
-        try {
-            $task->execute();
-            if (!$task->isSuccessful()) {
-                $this->pushErrors($task);
-            }
-        } catch (\Exception $e) {
-            //what to do, exception
+    private function executeTask(Task $task)
+    {
+        $task->execute();
+        if (!$task->isSuccessful()) {
+            $this->pushErrors($task);
         }
     }
 
@@ -110,23 +113,11 @@ final class Stark {
     /**
      * Todo - create an output class for that
      */
-    protected function handleResponse() {
-       $output = new Output();
-       if (!empty($this->errorsCollection)) {
-           $output->writeLn("Cannot perform action. Errors:");
-
-           $i = 0;
-           foreach ($this->errorsCollection as $taskName => $errors) {
-               $output->setPrefix('');
-               $output->writeLn(sprintf("%s. Hook %s failed with errors", ++$i,$taskName));
-               $output->setPrefix('    ');
-               foreach ($errors as $error) {
-                   $output->writeLn($error);
-               }
-           }
-
-
-       }
+    protected function handleResponse()
+    {
+       $renderer = $this->container->getRenderer();
+       $renderer->setErrors($this->errorsCollection);
+       $renderer->render();
     }
 
 }

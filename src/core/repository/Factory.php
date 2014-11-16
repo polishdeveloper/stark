@@ -1,11 +1,15 @@
 <?php
 namespace Stark\core\repository;
 
+use Stark\core\ContainerAwareTrait;
+
 final class Factory
 {
+    use ContainerAwareTrait;
 
     private $repoToClassNameMap = array(
-        'svn' => '\Stark\core\repository\SVN'
+        'svn' => '\Stark\core\repository\SVN',
+        'git' => '\Stark\core\repository\GIT'
     );
 
 
@@ -35,7 +39,7 @@ final class Factory
             return $reflectionClass->newInstanceArgs($arguments);
 
         } else {
-            throw new \InvalidArgumentException("Reposistory '$type' doesn't exist ");
+            throw new \InvalidArgumentException("Repository '$type' doesn't exist ");
         }
     }
 }
