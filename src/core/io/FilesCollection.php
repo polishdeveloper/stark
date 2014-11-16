@@ -7,7 +7,7 @@
  */
 namespace Stark\core\io;
 
-class FilesCollection implements  \ArrayAccess, \Iterator{
+class FilesCollection implements \Iterator, \Countable{
 
     private $position = 0;
     /**
@@ -33,32 +33,15 @@ class FilesCollection implements  \ArrayAccess, \Iterator{
         $filesCollection = new FilesCollection();
         foreach($this->files as $file) {
             if ($file->getOperation() === $action) {
-                $filesCollection[] = $file;
+                $filesCollection->addFile($file);
             }
         }
         return $filesCollection;
     }
 
-
-    public function offsetExists($offset)
+    public function count()
     {
-        return array_key_exists($offset, $this->files);
-    }
-
-    public function offsetGet($offset)
-    {
-        return $this->files[$offset];
-    }
-
-    public function offsetSet($offset, $value)
-    {
-        $this->addFile($value);
-    }
-
-
-    public function offsetUnset($offset)
-    {
-        unset($this->files[$offset]);
+        return count($this->files);
     }
 
     public function current()

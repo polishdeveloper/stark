@@ -13,6 +13,7 @@ class File {
     const DELETED = 'D';
     const ADDED = 'A';
     const MODIFIED = 'M';
+    const NO_ACTION = ' ';
 
     private $type;
     private $path;

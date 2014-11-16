@@ -5,7 +5,6 @@
  * Date: 04/05/14
  * Time: 2:26 PM
  */
-use Stark\core\io\HooksXMLReader;
 
 class FileTest extends \PHPUnit_Framework_TestCase {
 

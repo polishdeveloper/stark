@@ -1,6 +1,7 @@
 <?php
 
 use Stark\core\repository\SVN;
+use Stark\core\io\File;
 
 class SVNTests extends \PHPUnit_Framework_TestCase {
 
@@ -82,16 +83,16 @@ class SVNTests extends \PHPUnit_Framework_TestCase {
 
         $changedFilesCollection->expects($this->at(0))
             ->method('addFile')
-            ->with(new \Stark\core\io\File(\Stark\core\io\File::ADDED, ' ', 'addedFileOne', $mock));
+            ->with(new File(File::ADDED, File::NO_ACTION, 'addedFileOne', $mock));
         $changedFilesCollection->expects($this->at(1))
             ->method('addFile')
-            ->with(new \Stark\core\io\File(\Stark\core\io\File::ADDED, ' ', 'addedFileTwo', $mock));
+            ->with(new File(File::ADDED, File::NO_ACTION, 'addedFileTwo', $mock));
         $changedFilesCollection->expects($this->at(2))
             ->method('addFile')
-            ->with(new \Stark\core\io\File(\Stark\core\io\File::MODIFIED, ' ', 'modifiedFileOne', $mock));
+            ->with(new File(File::MODIFIED, File::NO_ACTION, 'modifiedFileOne', $mock));
         $changedFilesCollection->expects($this->at(3))
             ->method('addFile')
-            ->with(new \Stark\core\io\File(\Stark\core\io\File::DELETED, ' ',  'deletedFileOne', $mock));
+            ->with(new File(File::DELETED, File::NO_ACTION,  'deletedFileOne', $mock));
 
         $mock->getChangedFilesCollection();
     }
