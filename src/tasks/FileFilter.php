@@ -11,13 +11,19 @@ use Stark\core\tasks\Task;
 
 class FileFilter extends Task {
 
+    /**
+     * @var bool|array
+     */
     private $regex = false;
+    /**
+     * @var bool|array
+     */
     private $restrictedExtensions = false;
     private $admin = array();
 
 
     public function setExtensions($restrictedExtensions) {
-        $this->restrictedFiles = explode(',', $restrictedExtensions);
+        $this->restrictedExtensions = explode(',', $restrictedExtensions);
     }
 
     public function setRegex($regex) {
@@ -34,10 +40,8 @@ class FileFilter extends Task {
     }
 
     public function execute() {
-        if (!in_array($this->container->getRepo()->getAuthor(), $this->admin)) {
-            $filteredFiles = array();
-
-            if ($this->restrictedExtensions) {
+        if (!in_array($this->getContainer()->getRepo()->getAuthor(), $this->admin)) {
+            if ($this->restrictedExtensions !== false) {
                 foreach ($this->filterByExtension() as $file) {
                     $this->pushError("Cannot proceed file {$file->getPath()}, given extension is disabled");
                 }
@@ -52,7 +56,7 @@ class FileFilter extends Task {
 
     private function filterByExtension() {
         $files = array();
-        foreach ($this->container->getRepo()->getChangedFilesCollection() as $file) {
+        foreach ($this->getContainer()->getRepo()->getChangedFilesCollection() as $file) {
             if (in_array($file->getExtension(), $this->restrictedExtensions)) {
                 $files[] = $file;
             }
@@ -63,8 +67,8 @@ class FileFilter extends Task {
     private function filterByRegex() {
         $files = array();
 
-        foreach ($this->container->getRepo()->getChangedFilesCollection() as $file) {
-            if (preg_match_all($this->regex, $file->getPath()) != 0) {
+        foreach ($this->getContainer()->getRepo()->getChangedFilesCollection() as $file) {
+            if (preg_match_all($this->regex, $file->getPath(), $matches) != 0) {
                 $files[] = $file;
             }
         }

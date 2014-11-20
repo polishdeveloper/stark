@@ -1,5 +1,7 @@
 normal tasks
  -- format date into property
+ -- allow only asci file names
+ -- run phpunit
 
 Send message to IRC
 Is Author allowed to commit

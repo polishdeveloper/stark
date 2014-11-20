@@ -12,6 +12,9 @@ use Stark\core\tasks\Task;
 class Comment extends Task{
     private $minLength = 0;
     private $notEmpty  = 'true';
+    /**
+     * @var bool|string
+     */
     private $regex     = false;
 
 
@@ -43,7 +46,7 @@ class Comment extends Task{
 
 
     public function execute() {
-        $comment = $this->container->getRepo()->getComment();
+        $comment = $this->getContainer()->getRepo()->getComment();
 
         $this->validateNotEmpty($comment);
         $this->validateLength($comment);

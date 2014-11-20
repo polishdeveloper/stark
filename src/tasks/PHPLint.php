@@ -17,7 +17,7 @@ class PHPLint extends Task{
     }
 
     public function execute() {
-        foreach ($this->container->getRepo()->getChangedFilesCollection() as $file) {
+        foreach ($this->getContainer()->getRepo()->getChangedFilesCollection() as $file) {
             if (in_array($file->getExtension(), $this->phpFileExtensions) && $file->getOperation() != File::DELETED) {
                 $this->checkSyntax($file);
             }

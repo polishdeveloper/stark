@@ -19,7 +19,7 @@ class TicketExists extends Task{
     }
 
     public function execute() {
-        $comment = $this->container->getRepo()->getComment();
+        $comment = $this->getContainer()->getRepo()->getComment();
         if (preg_match($this->regex, $comment) == 0) {
             $this->pushError("Trac ticket not provided");
         }

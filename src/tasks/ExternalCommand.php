@@ -33,7 +33,7 @@ class ExternalCommand extends Task{
         exec($command, $output, $return_var);
         if ($return_var != $this->successExitCode) {
             $this->pushError(sprintf($this->errorMessage, $this->command, $return_var));
-            if ($this->includeOutput) {
+            if ($this->includeOutput && $output) {
                 foreach ($output as $outputLine) {
                     $this->pushError($outputLine);
                 }

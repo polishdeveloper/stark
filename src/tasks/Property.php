@@ -34,7 +34,7 @@ class Property extends Task {
             throw new \InvalidArgumentException('Expecting property name');
         }
         echo "Setting up property {$this->propertyName} = {$this->value}\n";
-        $this->container->getProperties()->set($this->propertyName, $this->value);
+        $this->getContainer()->getProperties()->set($this->propertyName, $this->value);
     }
 
 

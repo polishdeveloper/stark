@@ -70,7 +70,7 @@ class UpdateComposerLock extends Task
 
 
     private function fetchLastRevision() {
-        $repo = $this->container->getRepo();
+        $repo = $this->getContainer()->getRepo();
         return $repo->getRevisionId();
     }
 

@@ -71,7 +71,12 @@ class GIT extends CommandlineRepo implements Repository{
     }
 
     public function getComment() {
-
+        switch($this->hook) {
+            case self::COMMIT_MSG :
+                return file_get_contents($this->getArgument(self::TMP_LOG_FILE_NAME));
+            default :
+                throw new \RuntimeException("Commit msg is not available atm or it's not implemented yet");
+        }
     }
     public function getModifiedFiles() {
 
@@ -95,6 +100,12 @@ class GIT extends CommandlineRepo implements Repository{
 
     public function getRevisionId() {
 
+    }
+
+
+    private function getBranchName()
+    {
+        return trim($this->executeCommand('git symbolic-ref --short HEAD'));
     }
 
 }

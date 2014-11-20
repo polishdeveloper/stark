@@ -36,7 +36,8 @@ class RegisterRepository extends Task {
         if (null === $this->className) {
             throw new \InvalidArgumentException('Expecting className for repository ' . $this->repositoryName);
         }
-        if (!$this->container->getTasksFactory()->registerTask($this->name, $this->className, $errorMsg)) {
+        $errorMsg = '';
+        if (!$this->getContainer()->getRepo()->registerRepository($this->name, $this->className, $errorMsg)) {
             $this->pushError('Cannot register task ' . $this->name . ': ' . $errorMsg);
         }
     }

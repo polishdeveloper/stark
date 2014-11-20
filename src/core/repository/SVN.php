@@ -136,9 +136,5 @@ class SVN extends CommandlineRepo implements Repository{
     }
 
 
-    protected function executeCommand($command)
-    {
-        $console = new Console();
-        return $console->execute($command);
-    }
+
 }

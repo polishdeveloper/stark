@@ -35,10 +35,10 @@ class RegisterTask extends Task {
             throw new \InvalidArgumentException('Expecting task name');
         }
         if (null === $this->className) {
-            throw new \InvalidArgumentException('Expecting className for task ' . $this->task);
+            throw new \InvalidArgumentException('Expecting className for task ' . $this->name);
         }
         $errorMsg = '';
-        if (!$this->container->getTasksFactory()->registerTask($this->name, $this->className, $errorMsg)) {
+        if (!$this->getContainer()->getTasksFactory()->registerTask($this->name, $this->className, $errorMsg)) {
             $this->pushError('Cannot register task ' . $this->name . ': ' . $errorMsg);
         }
     }

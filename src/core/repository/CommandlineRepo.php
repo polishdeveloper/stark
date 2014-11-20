@@ -4,6 +4,10 @@ namespace Stark\core\repository;
 
 abstract class CommandlineRepo
 {
+    /**
+     * @var string
+     */
+    protected $hook;
     private $hooksArgsOrder = array();
     private $arguments = array();
 
@@ -43,5 +47,11 @@ abstract class CommandlineRepo
         return array_key_exists($argument, $this->arguments);
     }
 
+
+    protected function executeCommand($command)
+    {
+        $console = new Console();
+        return $console->execute($command);
+    }
 
 }
