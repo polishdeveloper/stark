@@ -41,7 +41,6 @@ class UpdateComposerLock extends Task
         $lastRevision = $this->fetchLastRevision();
         $this->updateComposerLockData($lastRevision);
         $this->writeComposerLockData();
-
     }
 
 

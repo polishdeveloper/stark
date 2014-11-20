@@ -7,34 +7,44 @@
  */
 namespace Stark\core\tasks;
 
-use Stark\core\Container;
+use Stark\core\ContainerAwareTrait;
+use Stark\core\interfaces\ContainerAware;
 
-abstract class Task {
+abstract class Task implements ContainerAware{
+    use ContainerAwareTrait;
+
+    /**
+     * @var array
+     */
     protected $errors = array();
 
     /**
-     * @var Container
+     * @param string $error
      */
-    private $container;
-
-    public function setContainer(Container $container) {
-        $this->container = $container;
-    }
-
-    public function pushError($error) {
+    public function pushError($error)
+    {
         $this->errors[] = $error;
     }
 
-    public function paramIsTrue($paramValue) {
+    public function paramIsTrue($paramValue)
+    {
         $paramValue = (string)strtolower($paramValue);
         return $paramValue != '' && $paramValue != 'no' && $paramValue != 'false' && $paramValue != '0';
     }
 
-    public function isSuccessful() {
+    /**
+     * @return bool
+     */
+    public function isSuccessful()
+    {
         return empty($this->errors);
     }
 
-    public function getErrors() {
+    /**
+     * @return array
+     */
+    public function getErrors()
+    {
         return $this->errors;
     }
 
@@ -45,6 +55,13 @@ abstract class Task {
         return $this->container->getProperties()->expand($message);
     }
 
+    /**
+     * @return string
+     */
     abstract function getName();
+
+    /**
+     * @return void
+     */
     abstract function execute();
 }
