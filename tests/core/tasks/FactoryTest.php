@@ -11,7 +11,10 @@ use Stark\core\tasks\Factory;
 
 
 class testTask {
+    public function setContainer($container)
+    {
 
+    }
     public function setMinLength($param) {
 
     }
@@ -56,6 +59,7 @@ class FactoryTests extends \PHPUnit_Framework_TestCase
 
     public function testInitializationOfNewTask() {
         $taskMock = $this->getMock('testTask', array('setMinLength', 'setNotEmpty', 'setContainer'));
+
         $taskMock->expects($this->once())
             ->method('setMinLength')
             ->with(5)
@@ -71,8 +75,46 @@ class FactoryTests extends \PHPUnit_Framework_TestCase
             ->with('test')
             ->will($this->returnValue($taskMock));
 
-
         $factoryMock->buildTask('test', array('minLength' => 5, 'notEmpty' => 'true'));
+    }
+
+    public function testCreationOfNewTask()
+    {
+        $taskFactory = new Factory();
+        $result = $taskFactory->registerTask('test', '\testTask', $error_message);
+        $myTask = $taskFactory->buildTask('test', array());
+        $this->assertInstanceOf('testTask', $myTask);
+        $this->assertEquals(true, $result);
+    }
+
+    public function testValidTaskRegistration()
+    {
+        $taskFactory = new Factory();
+        $error_message = false;
+        $result = $taskFactory->registerTask('test', '\testTask', $error_message);
+        $this->assertEquals(false, $error_message);
+        $this->assertEquals(true, $result);
+    }
+
+    public function testMissingTaskRegistration()
+    {
+        $taskFactory = new Factory();
+        $error_message = false;
+        $result = $taskFactory->registerTask('test', '\testTask2', $error_message);
+        $this->assertNotEquals(false, $error_message);
+        $this->assertEquals(false, $result);
+    }
+
+    public function testDoubleTaskTaskRegistration()
+    {
+        $taskFactory = new Factory();
+        $error_message = false;
+        $result = $taskFactory->registerTask('test', '\testTask', $error_message);
+        $this->assertEquals(false, $error_message);
+        $this->assertEquals(true, $result);
+        $result = $taskFactory->registerTask('test', '\testTask', $error_message);
+        $this->assertNotEquals(false, $error_message);
+        $this->assertEquals(false, $result);
     }
 
 }

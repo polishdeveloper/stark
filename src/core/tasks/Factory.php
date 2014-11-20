@@ -8,8 +8,10 @@
 namespace Stark\core\tasks;
 
 use Stark\core\Container;
+use Stark\core\ContainerAwareTrait;
 
 class Factory {
+    use ContainerAwareTrait;
 
     private $taskToClassNameMap = array(
         /** System tasks */
@@ -31,12 +33,6 @@ class Factory {
 
 
     );
-    private $container;
-
-
-    public function setContainer(Container $container) {
-        $this->container = $container;
-    }
 
     public function registerTask($name, $className, &$errorMessage) {
         if (array_key_exists($name, $this->taskToClassNameMap)) {
@@ -45,8 +41,10 @@ class Factory {
         }
         if (!class_exists($className)) {
             $errorMessage = "Class $className doesn't exist";
+            return false;
         }
         $this->taskToClassNameMap[$name] = $className;
+        return true;
     }
 
     public function buildTask($name, $params) {

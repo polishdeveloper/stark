@@ -51,8 +51,8 @@ abstract class Task implements ContainerAware{
     /**
      * @return string
      */
-    protected function expandVariable($message) {
-        return $this->container->getProperties()->expand($message);
+    public function expandVariable($message) {
+        return $this->getContainer()->getProperties()->expand($message);
     }
 
     /**
@@ -64,4 +64,5 @@ abstract class Task implements ContainerAware{
      * @return void
      */
     abstract function execute();
+
 }

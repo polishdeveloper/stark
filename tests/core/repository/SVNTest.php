@@ -11,7 +11,7 @@ class SVNTests extends \PHPUnit_Framework_TestCase {
         'svnlook log -t txn repo' => 'svnlookCommentOutput.log',
         'svnlook log -r rev repo' => 'svnlookCommentOutput.log',
         'svnlook changed -t txn repo' => 'svnlookChangesOutput.log',
-        'svnlook cat -t txn testFile' => 'svnlookCatOutput.log',
+        'svnlook cat -t txn repo path_to_file' => 'svnlookCatOutput.log',
     );
 
     /**
@@ -26,7 +26,7 @@ class SVNTests extends \PHPUnit_Framework_TestCase {
      * @param $count
      * @return PHPUnit_Framework_MockObject_MockObject|SVN
      */
-    private function getRepoMock($command, $count, array $params) {
+    private function getRepoMock($command, $count, array $params, &$output = null) {
         $output = file_get_contents(__DIR__  . '/../../fixtures/repository/svn/' . $this->commandToSampleOutputfile[$command]);
         $mock = $this->getMock('Stark\core\repository\SVN', array('executeCommand'), $params);
 
@@ -41,13 +41,25 @@ class SVNTests extends \PHPUnit_Framework_TestCase {
      * @expectedException \InvalidArgumentException
      */
     public function testIncorrectArgumentsCallThreeArguments() {
-        $svn = new SVN('one', 'two', 'three');
+        new SVN('one', 'two', 'three');
     }
 
-
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testInvavliadArgumentsCount()
+    {
+       new SVN('pre-commit');
+    }
     public function testGetAuthorInPreCommit() {
         $mock = $this->getRepoMock('svnlook author -t txn repo', $this->once(), array('pre-commit', 'repo', 'txn'));
         $this->assertEquals('polish_developer', $mock->getAuthor());
+    }
+
+    public function testGetFileContent()
+    {
+        $mock = $this->getRepoMock('svnlook cat -t txn repo path_to_file', $this->once(), array('pre-commit', 'repo', 'txn'), $fileContent);
+        $this->assertEquals($fileContent, $mock->getFileContent('path_to_file'));
     }
 
     public function testGetAuthorInPostCommit() {
@@ -98,4 +110,31 @@ class SVNTests extends \PHPUnit_Framework_TestCase {
     }
 
 
+
+    /**
+     * @expectedException \RuntimeException
+     */
+    public function testRevisionTransactionNotPresent()
+    {
+        $svn = new SVN('post-lock', 'a', 'b');
+        $svn->getChangedFilesCollection();
+    }
+
+    /**
+     * @expectedException \RuntimeException
+     */
+    public function testRevisionNotAvailable()
+    {
+        $svn = new SVN('pre-commit', 'a', 'b');
+        $svn->getRevisionId();
+    }
+
+    /**
+     * @expectedException \RuntimeException
+     */
+    public function testTransactionNotAvailable()
+    {
+        $svn = new SVN('post-commit', 'a', 'b');
+        $svn->getTransactionId();
+    }
 }

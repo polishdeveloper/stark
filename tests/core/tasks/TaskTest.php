@@ -9,7 +9,6 @@
 
 class TaskTests extends \PHPUnit_Framework_TestCase{
 
-
     public function testIsSuccessful() {
         $task = $this->getMockBuilder('Stark\core\tasks\Task')->getMockForAbstractClass();
         $this->assertEquals(true, $task->isSuccessful());
@@ -41,6 +40,31 @@ class TaskTests extends \PHPUnit_Framework_TestCase{
         $this->assertEquals(true, $task->paramIsTrue('TRUE'));
         $this->assertEquals(true, $task->paramIsTrue('TruE'));
         $this->assertEquals(true, $task->paramIsTrue('1'));
+    }
+
+    public function testExpandVariables()
+    {
+        $message = 'testMessage';
+
+        $propertiesMock = $this->getMock('stdClass', array('expand'));
+        $propertiesMock->expects($this->once())
+            ->method('expand')
+            ->with($message);
+
+        $containerMock = $this->getMock('stdClass', array('getProperties'));
+        $containerMock->expects($this->once())
+            ->method('getProperties')
+            ->will($this->returnValue($propertiesMock));
+
+        $taskMockBuilder = $this->getMockBuilder('Stark\core\tasks\Task');
+        $taskMockBuilder->setMethods(array('getContainer'));
+
+        $task = $taskMockBuilder->getMockForAbstractClass();
+        $task->expects($this->once())
+            ->method('getContainer')
+            ->will($this->returnValue($containerMock));
+
+        $task->expandVariable($message);
     }
 
 }

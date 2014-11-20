@@ -19,6 +19,15 @@ class FileFilter extends Task {
      * @var bool|array
      */
     private $restrictedExtensions = false;
+    /**
+     * @var bool
+     */
+    private $useOnlyAsciiFileNames = false;
+    /**
+     * @var bool
+     */
+    private $noSpaces = false;
+
     private $admin = array();
 
 
@@ -35,22 +44,43 @@ class FileFilter extends Task {
         $this->admin = explode(',', $admins);
     }
 
+    public function setNoSpaces($noSpaces)
+    {
+        $this->noSpaces = $noSpaces;
+    }
+
+    public function setUseOnlyAsciiFileNames($useOnlyAsciiFileNames)
+    {
+        $this->useOnlyAsciiFileNames = $useOnlyAsciiFileNames;
+    }
+
+
     public function getName() {
         return 'File filter';
     }
 
     public function execute() {
         if (!in_array($this->getContainer()->getRepo()->getAuthor(), $this->admin)) {
-            if ($this->restrictedExtensions !== false) {
-                foreach ($this->filterByExtension() as $file) {
-                    $this->pushError("Cannot proceed file {$file->getPath()}, given extension is disabled");
-                }
+
+            if ($this->noSpaces !== false) {
+                $this->verifyByRegex('[ +]', ' file name contains spaces');
+            }
+            if ($this->useOnlyAsciiFileNames !== false) {
+                $this->verifyByRegex('[^\x00-\x7F]', 'file name contains non-ASCII characters"');
             }
             if ($this->regex !== false) {
-                foreach ($this->filterByRegex() as $file) {
-                    $this->pushError("Cannot proceed file {$file->getPath()}, file matches regex '{$this->regex}'");
-                }
+                $this->verifyByRegex($this->regex, 'file name matches regex ' . $this->regex);
             }
+            if ($this->restrictedExtensions !== false) {
+                $this->verifyProperExtensions();
+            }
+        }
+    }
+
+    protected function verifyProperExtensions()
+    {
+        foreach ($this->filterByExtension() as $file) {
+            $this->pushError("Cannot proceed file {$file->getPath()}, given extension is disabled");
         }
     }
 
@@ -64,16 +94,15 @@ class FileFilter extends Task {
         return $files;
     }
 
-    private function filterByRegex() {
-        $files = array();
-
+    private function verifyByRegex($regex, $onMatchMessage) {
         foreach ($this->getContainer()->getRepo()->getChangedFilesCollection() as $file) {
-            if (preg_match_all($this->regex, $file->getPath(), $matches) != 0) {
-                $files[] = $file;
+            if (preg_match_all($regex, $file->getPath(), $matches) != 0) {
+                $this->pushError("Cannot proceed file  {$file->getPath()} : " . $onMatchMessage);
             }
         }
-        return $files;
     }
+
+
 
 
 }
