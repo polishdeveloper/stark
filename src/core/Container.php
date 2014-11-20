@@ -7,17 +7,26 @@
  */
 namespace Stark\core;
 
-use Stark\core\tasks\Factory;
+use Stark\core\tasks\Factory as TaskFactory;
+use Stark\core\repository\Factory as RepoFactory;
 
 class Container extends \Pimple\Container {
 
     /**
-     * @return Factory
+     * @return TaskFactory
      */
     public function getTasksFactory() {
         return $this['tasksFactory'];
     }
 
+    /**
+     * @return RepoFactory
+     */
+    public function getRepoFactory()
+    {
+        return $this['repoFactory'];
+
+    }
     /**
      * @return Properties
      */

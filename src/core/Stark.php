@@ -8,26 +8,20 @@
 namespace Stark\core;
 
 use Stark\core\io\HooksXMLReader;
-use Stark\core\repository\Factory;
 use Stark\core\tasks\Task;
 
 final class Stark {
-
+    use ContainerAwareTrait;
     /**
      * @var HooksXMLReader;
      */
     private $xml;
-    /**
-     * @var Container
-     */
-    private $container;
     private $errorsCollection = array();
+    /**
+     * @var string
+     */
     private $action;
 
-    public function setContainer(Container $container)
-    {
-        $this->container = $container;
-    }
 
     public function setArguments($arguments)
     {
@@ -35,9 +29,8 @@ final class Stark {
         $repoType = array_shift($arguments);
         $this->action   = $arguments[0];
 
-        $this->container['repo'] = function() use ($repoType, $arguments) {
-            $factory = new Factory();
-            return $factory->getRepository($repoType, $arguments);
+        $this->container['repo'] = function(Container $container) use ($repoType, $arguments) {
+            return $container->getRepoFactory()->getRepository($repoType, $arguments);
         };
 
         $this->loadHooks('hooks.xml');

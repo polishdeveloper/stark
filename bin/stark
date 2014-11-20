@@ -17,6 +17,12 @@ array_shift($arguments); //drop filename
 
 $container = new \Stark\core\Container();
 
+$container['repoFactory'] = function($container) {
+    $factory = new \Stark\core\repository\Factory();
+    $factory->setContainer($container);
+    return $factory;
+};
+
 $container['tasksFactory'] = function($container)  {
     $factory = new \Stark\core\tasks\Factory();
     $factory->setContainer($container);

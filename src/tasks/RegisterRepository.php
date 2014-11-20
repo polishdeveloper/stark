@@ -19,30 +19,38 @@ class RegisterRepository extends Task {
      */
     private $className;
 
-    public function setName($name) {
+    public function setName($name)
+    {
         if ($name == "") {
             throw new \InvalidArgumentException('Repository name cannot be null');
         }
         $this->repositoryName = $name;
     }
-    public function setClassname($className) {
+
+    /**
+     * @param string $className
+     */
+    public function setClassname($className)
+    {
         $this->className = $className;
     }
 
-    public function execute() {
-        if (null === $this->name) {
+    public function execute()
+    {
+        if (null === $this->repositoryName) {
             throw new \InvalidArgumentException('Expecting repository name');
         }
         if (null === $this->className) {
             throw new \InvalidArgumentException('Expecting className for repository ' . $this->repositoryName);
         }
         $errorMsg = '';
-        if (!$this->getContainer()->getRepo()->registerRepository($this->name, $this->className, $errorMsg)) {
-            $this->pushError('Cannot register task ' . $this->name . ': ' . $errorMsg);
+        if (!$this->getContainer()->getRepoFactory()->registerRepository($this->repositoryName, $this->className, $errorMsg)) {
+            $this->pushError('Cannot register task ' . $this->repositoryName . ': ' . $errorMsg);
         }
     }
 
-    public function getName() {
+    public function getName()
+    {
         return 'Repository registration';
     }
 
