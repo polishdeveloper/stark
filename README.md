@@ -2,6 +2,7 @@ STARK
 ========
 [![Build Status](https://travis-ci.org/polishdeveloper/stark.svg?branch=master)](https://travis-ci.org/polishdeveloper/stark)
 [![Coverage Status](https://coveralls.io/repos/polishdeveloper/stark/badge.png?branch=master)](https://coveralls.io/r/polishdeveloper/stark?branch=master)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/polishdeveloper/stark/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/polishdeveloper/stark/?branch=master)
 
 Stark is a project to perform VCS hooks and in case of errors stop action and report to user.
 Stark's use of simple XML hooks file and extensible PHP task classes make it an easy-to-use and highly flexible VCS hooks framework.
@@ -29,30 +30,30 @@ stark type action arg1, arg2, arg3, ... argN
 
 | param | info  |
 | ----- | ----- |
-| type  | repository type. At this moment STARK supports only GIT and SVN |
-| action  | action you want to perform. Stark will take all tasks definied under hooks/hook/{ACTION} tree and execute them. If at least one of them fails script will stop commit and output error message [only on pre-actions] |
+| type  | repository type. At this moment STARK supports only SVN. Git Support is in progress |
+| action  | action you want to perform. Stark will take all tasks definied under hooks/{ACTION} tree and execute them. If at least one of them fails script will stop commit and output error message [only on pre-actions] |
 | arg1, arg2, arg3 | arguments set for repository |
   
 
   
 Sample XML definition
 ---
-  
   ```xml
-  <stark>
-            <hooks>
-                <pre-commit>
-                    <comment minLength="10" notEmpty="true" />
-                    <comment regex="/[a-zA-Z0-9 ]+/"/>
-                    <fileFilter extensions="log,ini" />
-                    <phpLint />
-                </pre-commit>
-                <post-commit>
-                    <mail to="raynor@dev" subject="Post commit" body="Valid commit by ${author}"/>
-                    <log file="/tmp/vcs.log" message="Commit was made by ${author} on ${date} ${time}. Commit message : ${message}" />
-                </post-commit>
-            </hooks>
-        </stark>
+    <stark>
+        <hooks>
+            <pre-commit>
+                <comment minLength="10" notEmpty="true" />      <!-- comment has to be at least 10 chars long -->
+                <comment regex="/[a-zA-Z0-9 ]+/"/>             <!-- allow only comment with given regex  -->
+                <phpLint  />                                   <!-- run php syntax check -->
+                <fileFilter extensions="log,ini" asciiFileNames="true" noSpaces="true"/>    <!-- dont allow to commit log and ini files, allow only ascii files without spaces -->
+                <phpCS pathToExecutable="/usr/bin/phpcs" standard="PSR2" />                 <!-- run PHP Codesniffer check with PSR2 standard  -->
+            </pre-commit>
+            <post-commit>
+                <mail to="raynor@dev" subject="Post commit" body="Valid commit by ${author}"/>
+                <log file="/tmp/vcs.log" message="Commit was made by ${author} on ${date} ${time}. Commit message : ${message}" />
+            </post-commit>
+        </hooks>
+    </stark>
 ```
 
 By this XML file during the pre-commit action STARK will check 
@@ -75,7 +76,7 @@ Comment
    
 | Parameter  | Default value | Required | Description |
 | ---------- | ------------- | --------- | ---------- |
-| minLenght  | 0  | no | Minimum comment lenght|
+| minLenght  | 0  | no | Minimum comment length|
 | notEmpty   | true | no | can comment be empty |
 | regex      | /.*/ | no | regular expression comment has to match |
    

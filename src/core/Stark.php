@@ -62,7 +62,7 @@ final class Stark {
             try {
                 $this->executeTask($task);
             } catch (\Exception $e)  {
-
+                //task failed skip it. There is no need to break commit when things internally dont'w work
             }
         }
     }
@@ -105,9 +105,6 @@ final class Stark {
         $this->errorsCollection[$task->getName()] = array_merge($this->errorsCollection[$task->getName()], $task->getErrors());
     }
 
-    /**
-     * Todo - create an output class for that
-     */
     protected function handleResponse()
     {
        $renderer = $this->container->getRenderer();
