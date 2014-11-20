@@ -11,6 +11,9 @@ class Output {
 
     private $prefix = '';
 
+    /**
+     * @param string $prefix
+     */
     public function setPrefix($prefix) {
         $this->prefix = $prefix;
     }

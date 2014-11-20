@@ -24,6 +24,11 @@ class File {
     private $content;
     private $dir_action;
 
+    /**
+     * @param string $type
+     * @param string $dirAction
+     * @param string $path
+     */
     public function __construct($type, $dirAction, $path, Repository $repo) {
         $this->type = $type;
         $this->path = $path;
@@ -43,6 +48,9 @@ class File {
         return pathinfo($this->path, PATHINFO_EXTENSION);
     }
 
+    /**
+     * @return string
+     */
     public function getContent() {
         if ($this->content === null) {
             $this->content = $this->repo->getFileContent($this->path);

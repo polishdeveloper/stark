@@ -41,6 +41,9 @@ class Properties {
         });
     }
 
+    /**
+     * @param string $property
+     */
     public function set($property, $value) {
         if ($property == '') {
             throw new \InvalidArgumentException('Cannot set property with empty name');

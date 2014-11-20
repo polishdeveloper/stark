@@ -7,7 +7,6 @@
  */
 namespace Stark\core\io;
 
-use Stark\core\Container;
 use Stark\core\ContainerAwareTrait;
 
 class Renderer {
@@ -41,6 +40,7 @@ class Renderer {
      * @param $i
      * @param $taskName
      * @param $errors
+     * @param integer $index
      */
     public function renderTaskMessages(Output $output, $index, $taskName, $errors)
     {
