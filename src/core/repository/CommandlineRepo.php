@@ -40,9 +40,16 @@ abstract class CommandlineRepo
         }
     }
 
+    /**
+     * @param string $argument
+     */
     protected function getArgument($argument) {
         return $this->arguments[$argument];
     }
+
+    /**
+     * @param string $argument
+     */
     protected function hasArgument($argument) {
         return array_key_exists($argument, $this->arguments);
     }

@@ -38,6 +38,9 @@ abstract class Task {
         return $this->errors;
     }
 
+    /**
+     * @return string
+     */
     protected function expandVariable($message) {
         return $this->container->getProperties()->expand($message);
     }

@@ -8,7 +8,6 @@
 namespace Stark\core;
 
 use Stark\core\io\HooksXMLReader;
-use Stark\core\io\Output;
 use Stark\core\repository\Factory;
 use Stark\core\tasks\Task;
 
@@ -85,6 +84,9 @@ final class Stark {
         return $tasks;
     }
 
+    /**
+     * @param string $filename
+     */
     public function loadHooks($filename)
     {
         $this->xml = $this->container['configReader']->read($filename);
