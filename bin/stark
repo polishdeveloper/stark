@@ -55,4 +55,4 @@ $container['configReader'] = function($container) {
 $stark = new Stark\core\Stark();
 $stark->setContainer($container);
 $stark->setArguments($arguments);
-$stark->execute();
+exit($stark->execute());

@@ -27,7 +27,8 @@ class Factory {
         'log'                 => 'Stark\tasks\Log',
 
         /** PHP Tasks */
-        'phplint'             => 'Stark\tasks\PHPLint'
+        'php_lint'             => 'Stark\tasks\PHP\PHPLint',
+        'php_cs'               => 'Stark\tasks\PHP\PHPCS'
 
         /** Bugtracking tasks */
 

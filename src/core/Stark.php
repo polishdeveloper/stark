@@ -11,6 +11,9 @@ use Stark\core\io\HooksXMLReader;
 use Stark\core\tasks\Task;
 
 final class Stark {
+    const SUCCESS = 0;
+    const FAILURE = 255;
+
     use ContainerAwareTrait;
     /**
      * @var HooksXMLReader;
@@ -53,6 +56,7 @@ final class Stark {
         $tasks = $this->createTasks($tasksDefinitions);
         $this->executeTasks($tasks);
         $this->handleResponse();
+        return empty($this->errorsCollection) ? self::SUCCESS : self::FAILURE;
     }
 
 

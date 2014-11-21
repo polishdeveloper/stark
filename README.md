@@ -25,13 +25,13 @@ Usage
 ---
   
 ```bash
-stark type action arg1, arg2, arg3, ... argN
+stark vcs_type action arg1, arg2, arg3, ... argN
 ```
 
 | param | info  |
 | ----- | ----- |
 | type  | repository type. At this moment STARK supports only SVN. Git Support is in progress |
-| action  | action you want to perform. Stark will take all tasks definied under hooks/{ACTION} tree and execute them. If at least one of them fails script will stop commit and output error message [only on pre-actions] |
+| action  | action you want to perform. Stark will take all tasks defined under hooks/{ACTION} tree and execute them. If at least one of them fails script will stop commit and output error message [only on pre-actions] |
 | arg1, arg2, arg3 | arguments set for repository |
   
 
@@ -42,30 +42,20 @@ Sample XML definition
     <stark>
         <hooks>
             <pre-commit>
-                <comment minLength="10" notEmpty="true" />      <!-- comment has to be at least 10 chars long -->
-                <comment regex="/[a-zA-Z0-9 ]+/"/>             <!-- allow only comment with given regex  -->
-                <phpLint  />                                   <!-- run php syntax check -->
-                <fileFilter extensions="log,ini" asciiFileNames="true" noSpaces="true"/>    <!-- dont allow to commit log and ini files, allow only ascii files without spaces -->
-                <phpCS pathToExecutable="/usr/bin/phpcs" standard="PSR2" />                 <!-- run PHP Codesniffer check with PSR2 standard  -->
+                <comment minLength="10" notEmpty="true" />                                   <!-- comment has to be at least 10 chars long -->
+                <comment regex="/[a-zA-Z0-9 ]+/"/>                                           <!-- allow only comment with given regex  -->
+                <file_filter extensions="log,ini" asciiFileNames="true" noSpaces="true"/>    <!-- don't allow to commit log and ini files, allow only ascii files without spaces -->
+                <php_lint  />                                                                <!-- run php syntax check -->
+                <php_cs standard="PSR2" />                                                   <!-- run PHP CodesSniffer check with PSR2 standard  -->
             </pre-commit>
             <post-commit>
-                <mail to="raynor@dev" subject="Post commit" body="Valid commit by ${author}"/>
+                <mail to="raynor@dev" subject="Post commit" body="Valid commit by ${author}: ${message}"/>
                 <log file="/tmp/vcs.log" message="Commit was made by ${author} on ${date} ${time}. Commit message : ${message}" />
             </post-commit>
         </hooks>
     </stark>
 ```
-
-By this XML file during the pre-commit action STARK will check 
- * comment is not empty and contains at least 10 characters
- * comment matches [a-zA-Z0-9]+ regex.
- * user is not commiting .log or .ini files
- * php files have correct syntax
  
-And during  the post-commit action STARK will 
- * send email to raynor@dev with subject *Post commit* and information about author
- * will log in /tmp/vcs.log information about action (author, date and time)
-   
    
 Available Tasks
 ----------------
@@ -76,30 +66,34 @@ Comment
    
 | Parameter  | Default value | Required | Description |
 | ---------- | ------------- | --------- | ---------- |
-| minLenght  | 0  | no | Minimum comment length|
+| minLength  | 0  | no | Minimum comment length|
 | notEmpty   | true | no | can comment be empty |
 | regex      | /.*/ | no | regular expression comment has to match |
    
 
-| ExternalCommand 
- ---
-    <externalCommand command="ls -la" errorMessage="Cannot execute command" />
+Execute external command
+---
+    <external_command command="ls -la" errorMessage="Cannot execute command" />
+
 | Parameter  | Default value | Required | Description |
 | ---------- | ------------- | --------- | ---------- |
 | command    |  null    | yes       | command to run |
 | errorMessage | Execution of remote command '%s' failed with code '%s | no | Error message to show when command fails (sends exitCode different than successExitCode |
 | successExitCode | 0 | no | success exit code |
-| includeOuput | false | no | when tasks fails, should error message contain output of script |
+| includeOutput | false | no | when tasks fails, should error message contain output of script |
  
    
    
 File Filter
 ---
-    <fileFilter extensions="ini,log,tmp" regex="^\/tmp\/.*$" />
+    <file_filter extensions="ini,log,tmp" regex="^\/tmp\/.*$" />
+
 | Parameter  | Default value | Required | Description |
 | ---------- | ------------- | --------- | ---------- |
 | extensions    |  null    | no       | comma sepearated list of extensions to filter |
 | regex | '' | no | file paths cannot match given regular expression |
+| noSpaces | false | no | Don't allow spaces in file names |
+| UseOnlyAsciiFileNames | false | no | Allow only ASCII chars in file name |
 | admins | '' | no | comma separated list of authors who are allowed to commit |
     
 Log
@@ -108,8 +102,8 @@ Log
    
 | Parameter  | Default value | Required | Description |
 | ---------- | ------------- | --------- | ---------- |
-| file  | '' | yes | log file name|
-| message | '' | yes | line to put into log file |
+| file  |  | yes | log file name|
+| message |  | yes | line to put into log file |
    
 Mail
 ---
@@ -126,23 +120,31 @@ Mail
     
 PHPLint
 ---
-    <phpLint  />
+    <php_lint  />
  
 | Parameter  | Default value | Required | Description |
 | ---------- | ------------- | --------- | ---------- |
 | fileExtensions  | php,php4,php5,phtml | no | comma separated list of php file extensions |
     
-
+PHP Code Sniffer
+---
+    <php_cs  />
+ 
+| Parameter  | Default value | Required | Description |
+| ---------- | ------------- | --------- | ---------- |
+| fileExtensions  | php,php4,php5,phtml | no | comma separated list of php file extensions |
+| standard  | PSR-2 | no | Code Style standard |
 
 RegisterRepository
 ---
+     <register_repository name="vcs" classname="myTaskClass"  />>
 Registers a new repository for given hooks.
-    <registerRepository name="vcs" classname="myVCSClass"  />
    
 | Parameter  | Default value | Required | Description |
 | ---------- | ------------- | --------- | ---------- |
 | name  | '' |  yes | repository name |
 | classname  | '' |  yes | class that implments **\Stark\core\Repository** interface |
+
 To use new repository you have to run Stark passing new repository name 
 ```bash
 stark vcs myAction arg1, arg2, arg3
@@ -151,7 +153,7 @@ stark vcs myAction arg1, arg2, arg3
 
 RegisterTask
 ---
-    <registerTask name="myTask" classname="myTaskClass"  />
+    <register_task name="myTask" classname="myTaskClass"  />
    
 | Parameter  | Default value | Required | Description |
 | ---------- | ------------- | --------- | ---------- |
